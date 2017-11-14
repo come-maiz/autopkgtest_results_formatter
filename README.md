@@ -1,0 +1,2 @@
+# autopkgtests_results_formatter
+Format autopkgtest results
