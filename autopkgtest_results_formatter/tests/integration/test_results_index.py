@@ -15,12 +15,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import testtools
-from testtools.matchers import Contains
+from testtools.matchers import (
+    Contains,
+    FileExists,
+    Not
+)
 
 from autopkgtest_results_formatter import results_index
 
 
 class ResultsIndexTestCase(testtools.TestCase):
+
+    def test_context_manager_cleans_retrieve(self):
+        with results_index.ResultsIndex(
+                distro='xenial', ppa_user='snappy-dev',
+                ppa_name='snapcraft-daily') as index:
+            self.assertThat(index._index_file_path, FileExists())
+
+        self.assertThat(index._index_file_path, Not(FileExists()))
 
     def test_read(self):
         with results_index.ResultsIndex(

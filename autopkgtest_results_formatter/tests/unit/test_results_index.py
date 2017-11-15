@@ -19,11 +19,7 @@ from unittest import mock
 
 import testscenarios
 from testtools import ExpectedException
-from testtools.matchers import (
-    Equals,
-    FileExists,
-    Not
-)
+from testtools.matchers import Equals
 
 from autopkgtest_results_formatter import (
     errors,
@@ -60,17 +56,6 @@ class TestResultsIndexTestCase(unit.TestCase):
             'https://objectstorage.prodstack4-5.canonical.com/v1/'
             'AUTH_77e2ada1e7a84929a74ba3b87153c0ac/'
             'autopkgtest-testdistro-testuser-testppa')
-
-    def test_context_manager_cleans_retrieve(self):
-        test_index_file_path = os.path.join(
-            self.path, 'autopkgtest-testdistro-testuser-testppa')
-        open(test_index_file_path, 'w').close()
-        with results_index.ResultsIndex(
-                distro='testdistro', ppa_user='testuser', ppa_name='testppa',
-                base_results_url='file://{}'.format(self.path)) as index:
-            self.assertThat(index._index_file_path, FileExists())
-
-        self.assertThat(index._index_file_path, Not(FileExists()))
 
     def test_read(self):
         test_index_file_path = os.path.join(
