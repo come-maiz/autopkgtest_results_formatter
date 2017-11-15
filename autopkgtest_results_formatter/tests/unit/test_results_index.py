@@ -17,7 +17,6 @@
 import os
 from unittest import mock
 
-import testscenarios
 from testtools import ExpectedException
 from testtools.matchers import Equals
 
@@ -28,22 +27,14 @@ from autopkgtest_results_formatter import (
 from autopkgtest_results_formatter.tests import unit
 
 
-class TestResultsIndexWithoutContextTestCase(
-        testscenarios.WithScenarios, unit.TestCase):
+class TestResultsIndexTestCase(unit.TestCase):
 
-    scenarios = (
-        ('read', {'method': 'read', 'action': 'read index'}),)
-
-    def test_call_method_without_context_raises_error(self):
+    def test_read_without_context_raises_error(self):
         index = results_index.ResultsIndex(
             distro='dummy', ppa_user='dummy', ppa_name='dummy')
-        method = getattr(index, self.method)
         error = self.assertRaises(
-            errors.ResultsIndexNotDownloadedError, method)
+            errors.ResultsIndexNotDownloadedError, index.read)
         self.assertThat(error.action, Equals('read index'))
-
-
-class TestResultsIndexTestCase(unit.TestCase):
 
     def test_download_makes_request(self):
         with mock.patch('urllib.request.urlretrieve') as mock_urlretrieve:
@@ -70,3 +61,48 @@ class TestResultsIndexTestCase(unit.TestCase):
             self.assertThat(
                 index.read(),
                 Equals('testentry1\ntestentry2\n'))
+
+    def test_filter_by_day(self):
+        test_index_file_path = os.path.join(
+            self.path, 'autopkgtest-testdistro-testuser-testppa')
+        with open(test_index_file_path, 'w') as test_index_file:
+            test_index_file.write(
+                'testdistro/testarch1/t/testpackage/20000101_123456_12345@/'
+                'log.gz\n'
+                'testdistro/testarch1/t/testpackage/20000101_123456_12345@/'
+                'result.tar\n'
+                'testdistro/testarch1/t/testpackage/20000101_123456_12345@/'
+                'artifacts.tar.gz\n'
+                'testdistro/testarch1/t/testpackage/20170101_123456_12345@/'
+                'log.gz\n'
+                'testdistro/testarch1/t/testpackage/20170101_123456_12345@/'
+                'result.tar\n'
+                'testdistro/testarch1/t/testpackage/20170101_123456_12345@/'
+                'artifacts.tar.gz\n'
+                'testdistro/testarch1/t/testpackage/20170101_654321_12345@/'
+                'log.gz\n'
+                'testdistro/testarch1/t/testpackage/20170101_654321_12345@/'
+                'result.tar\n'
+                'testdistro/testarch1/t/testpackage/20170101_654321_12345@/'
+                'artifacts.tar.gz\n'
+                'testdistro/testarch1/t/testpackage/20171231_123456_12345@/'
+                'log.gz\n'
+                'testdistro/testarch1/t/testpackage/20171231_123456_12345@/'
+                'result.tar\n'
+                'testdistro/testarch1/t/testpackage/20171231_123456_12345@/'
+                'artifacts.tar.gz\n'
+            )
+
+        result = []
+        with results_index.ResultsIndex(
+                distro='testdistro', ppa_user='testuser', ppa_name='testppa',
+                base_results_url='file://{}'.format(self.path)) as index:
+            for entry in index.filter_by_day('20170101'):
+                result.append(entry)
+
+        self.assertThat(
+            result,
+            Equals([
+                'testdistro/testarch1/t/testpackage/20170101_123456_12345@',
+                'testdistro/testarch1/t/testpackage/20170101_654321_12345@'
+            ]))

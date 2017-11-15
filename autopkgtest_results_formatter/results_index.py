@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
 from urllib import request
 
 from autopkgtest_results_formatter import errors
@@ -73,10 +74,31 @@ class ResultsIndex():
         """Return the contents of the index.
 
         :return str: The full contents of the index.
-        :raises errors.ResultsIndexNotDownloadedError: If a method is called
-            before the index has been downloaded.
+        :raises errors.ResultsIndexNotDownloadedError: If called before the
+            index has been downloaded.
         """
         if not self._index_file_path:
             raise errors.ResultsIndexNotDownloadedError(action='read index')
         with open(self._index_file_path, 'r') as index_file:
             return index_file.read()
+
+    def filter_by_day(self, day):
+        """Iterate over the entries in the index of the specified day.
+
+        The value returned by each iteration is the directory that contains the
+        files with the results other information of the test execution.
+
+        :param str day: The day to filter results, with format yyyymmdd.
+        :raises errors.ResultsIndexNotDownloadedError: If called before the
+            index has been downloaded.
+        """
+        index_contents = self.read()
+        seen = set()
+        for entry in index_contents.split():
+            pattern = '.+/.+/.+/.+/{}_.+_.+@/.+'.format(day)
+            match = re.fullmatch(pattern, entry)
+            if match:
+                directory = entry[:entry.rfind('/')]
+                if directory not in seen:
+                    seen.add(directory)
+                    yield directory
