@@ -30,9 +30,10 @@ class ResultsIndexTestCase(testtools.TestCase):
         with results_index.ResultsIndex(
                 distro='xenial', ppa_user='snappy-dev',
                 ppa_name='snapcraft-daily') as index:
-            self.assertThat(index._index_file_path, FileExists())
+            index_file_path = index._index_file_path
+            self.assertThat(index_file_path, FileExists())
 
-        self.assertThat(index._index_file_path, Not(FileExists()))
+        self.assertThat(index_file_path, Not(FileExists()))
 
     def test_read(self):
         with results_index.ResultsIndex(

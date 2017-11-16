@@ -22,12 +22,22 @@ from testtools.matchers import Equals
 
 from autopkgtest_results_formatter import (
     errors,
+    result_entry,
     results_index
 )
 from autopkgtest_results_formatter.tests import unit
 
 
 class TestResultsIndexTestCase(unit.TestCase):
+
+    def test_get_url(self):
+        index = results_index.ResultsIndex(
+            distro='testdistro', ppa_user='testuser', ppa_name='testppa')
+        self.assertThat(
+            index.url,
+            Equals('https://objectstorage.prodstack4-5.canonical.com/v1/'
+                   'AUTH_77e2ada1e7a84929a74ba3b87153c0ac/'
+                   'autopkgtest-testdistro-testuser-testppa'))
 
     def test_read_without_context_raises_error(self):
         index = results_index.ResultsIndex(
@@ -103,6 +113,12 @@ class TestResultsIndexTestCase(unit.TestCase):
         self.assertThat(
             result,
             Equals([
-                'testdistro/testarch1/t/testpackage/20170101_123456_12345@',
-                'testdistro/testarch1/t/testpackage/20170101_654321_12345@'
+                result_entry.ResultEntry(
+                    index_url=index.url,
+                    directory=('testdistro/testarch1/t/testpackage/'
+                               '20170101_123456_12345@')),
+                result_entry.ResultEntry(
+                    index_url=index.url,
+                    directory=('testdistro/testarch1/t/testpackage/'
+                               '20170101_654321_12345@'))
             ]))

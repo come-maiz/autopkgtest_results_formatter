@@ -17,7 +17,10 @@
 import re
 from urllib import request
 
-from autopkgtest_results_formatter import errors
+from autopkgtest_results_formatter import (
+    errors,
+    result_entry
+)
 
 
 _BASE_RESULTS_URL = (
@@ -52,12 +55,24 @@ class ResultsIndex():
         self._ppa_name = ppa_name
         self._base_results_url = base_results_url
         self._index_file_path = None
+        self._url = None
+
+    @property
+    def url(self):
+        """The URL of the results index."""
+        if not self._url:
+            self._url = (
+                '{base_url}/autopkgtest-{distro}-{ppa_user}-{ppa_name}'.format(
+                    base_url = self._base_results_url, distro=self._distro,
+                    ppa_user=self._ppa_user, ppa_name=self._ppa_name))
+        return self._url
 
     def __enter__(self):
         self._index_file_path = self._download_index()
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
+        self._index_file_path = None
         request.urlcleanup()
 
     def _download_index(self):
@@ -65,10 +80,7 @@ class ResultsIndex():
 
         :return str: The path to a local file with the results index.
         """
-        url = '{base_url}/autopkgtest-{distro}-{ppa_user}-{ppa_name}'.format(
-            base_url = self._base_results_url, distro=self._distro,
-            ppa_user=self._ppa_user, ppa_name=self._ppa_name)
-        return request.urlretrieve(url)[0]
+        return request.urlretrieve(self.url)[0]
 
     def read(self):
         """Return the contents of the index.
@@ -101,4 +113,5 @@ class ResultsIndex():
                 directory = entry[:entry.rfind('/')]
                 if directory not in seen:
                     seen.add(directory)
-                    yield directory
+                    yield result_entry.ResultEntry(
+                        index_url=self.url, directory=directory)
