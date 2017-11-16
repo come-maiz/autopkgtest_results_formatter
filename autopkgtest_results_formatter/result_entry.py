@@ -39,6 +39,8 @@ class ResultEntry():
         self._directory = directory
         self._temp_dir = tempfile.mkdtemp()
         self._result_dir_path = None
+        self._distro = None
+        self._architecture = None
 
     def __eq__(self, other):
         return (
@@ -56,6 +58,22 @@ class ResultEntry():
         if self._temp_dir:
             shutil.rmtree(self._temp_dir)
             self._temp_dir = None
+
+    @property
+    def distro(self):
+        if not self._distro:
+            return self._get_info_from_directory()[0]
+        return self._distro
+
+    @property
+    def architecture(self):
+        if not self._architecture:
+            return self._get_info_from_directory()[1]
+        return self._architecture
+
+    def _get_info_from_directory(self):
+        self._distro, self._architecture, _, _, _ = self._directory.split('/')
+        return (self._distro, self._architecture)
 
     def is_pull_request(self):
         """Return True if this entry is a pull request, otherwise, False."""
