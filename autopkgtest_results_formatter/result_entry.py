@@ -85,3 +85,12 @@ class ResultEntry():
                 index=self._index_url, directory=self._directory),
             filename=result_file_path)
         return result_file_path
+
+    def is_success(self):
+        """Return True if this entry is exited with 0, otherwise, False."""
+        return self._get_exitcode().strip() == '0'
+
+    def _get_exitcode(self):
+        result_dir_path = self._get_result()
+        with open(os.path.join(result_dir_path, 'exitcode')) as exitcode:
+            return exitcode.read()

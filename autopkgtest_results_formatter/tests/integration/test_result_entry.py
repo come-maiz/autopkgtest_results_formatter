@@ -31,6 +31,9 @@ TEST_RESULT_DIRECTORY_PULL_REQUEST = (
     'xenial/i386/s/snapcraft/20171115_174112_f7052@')
 TEST_RESULT_DIRECTORY_PPA = (
     'xenial/amd64/s/snapcraft/20171114_134152_41f31@')
+TEST_RESULT_DIRECTORY_SUCCESS = (
+    'xenial/amd64/s/snapcraft/20161104_095550_99bb8@')
+TEST_RESULT_DIRECTORY_FAILURE = TEST_RESULT_DIRECTORY_PPA
 
 
 class ResultEntryTestCase(testtools.TestCase):
@@ -56,3 +59,15 @@ class ResultEntryTestCase(testtools.TestCase):
                 index_url=TEST_RESULT_INDEX_URL,
                 directory=TEST_RESULT_DIRECTORY_PPA) as entry:
             self.assertFalse(entry.is_pull_request())
+
+    def test_is_success(self):
+        with result_entry.ResultEntry(
+                index_url=TEST_RESULT_INDEX_URL,
+                directory=TEST_RESULT_DIRECTORY_SUCCESS) as entry:
+            self.assertTrue(entry.is_success())
+
+    def test_is_not_success(self):
+        with result_entry.ResultEntry(
+                index_url=TEST_RESULT_INDEX_URL,
+                directory=TEST_RESULT_DIRECTORY_FAILURE) as entry:
+            self.assertFalse(entry.is_success())
