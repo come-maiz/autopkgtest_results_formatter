@@ -24,7 +24,7 @@ setuptools.setup(
     description='Format autopkgtest results',
     author_email='leo.arias@canonical.com',
     url='https://github.com/elopio/autopkgtest_results_formatter',
-    packages=['autopkgtest_results_formatter',
+    packages=['autopkgtest_results_formatter'],
     license='GPL v3',
     classifiers=(
         'Development Status :: 3 - Alpha',
@@ -39,7 +39,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'autopkgtest_results_formatter='
-            'autopkgtest_results_formatter.__main__'
+            'autopkgtest_results_formatter.__main__:main'
         ]
     }
 )
