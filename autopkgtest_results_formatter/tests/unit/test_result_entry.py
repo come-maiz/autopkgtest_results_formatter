@@ -48,15 +48,33 @@ class ResultEntryTestCase(unit.TestCase):
         self.assertThat(
             result_entry.ResultEntry(
                 index_url='dummy',
-                directory='test_distro/dummy/dummy/dummy/dummy').distro,
+                directory=('test_distro/dummy/dummy/dummy/'
+                           'dummy_dummy_dummy')).distro,
             Equals('test_distro'))
 
     def test_get_architecture(self):
         self.assertThat(
             result_entry.ResultEntry(
                 index_url='dummy',
-                directory='dummy/test_arch/dummy/dummy/dummy').architecture,
+                directory=('dummy/test_arch/dummy/dummy/'
+                           'dummy_dummy_dummy')).architecture,
             Equals('test_arch'))
+
+    def test_get_day(self):
+        self.assertThat(
+            result_entry.ResultEntry(
+                index_url='dummy',
+                directory=('dummy/dummy/dummy/dummy/'
+                           'testday_dummy_testday@')).day,
+            Equals('testday'))
+
+    def test_get_identifier(self):
+        self.assertThat(
+            result_entry.ResultEntry(
+                index_url='dummy',
+                directory=('dummy/dummy/dummy/dummy/'
+                           'dummy_dummy_testid@')).identifier,
+            Equals('testid'))
 
     def test_download_result_makes_request(self):
         with mock.patch('urllib.request.urlretrieve') as mock_urlretrieve:

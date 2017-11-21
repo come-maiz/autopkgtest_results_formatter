@@ -41,6 +41,8 @@ class ResultEntry():
         self._result_dir_path = None
         self._distro = None
         self._architecture = None
+        self._day = None
+        self._identifier = None
 
     def __eq__(self, other):
         return (
@@ -71,9 +73,24 @@ class ResultEntry():
             return self._get_info_from_directory()[1]
         return self._architecture
 
+    @property
+    def day(self):
+        if not self._day:
+            return self._get_info_from_directory()[2]
+        return self._day
+
+    @property
+    def identifier(self):
+        if not self._identifier:
+            return self._get_info_from_directory()[3]
+        return self._identifier
+
     def _get_info_from_directory(self):
-        self._distro, self._architecture, _, _, _ = self._directory.split('/')
-        return (self._distro, self._architecture)
+        dir_parts = self._directory.split('/')[-5:]
+        self._distro, self._architecture, _, _, day_time_id = dir_parts
+        self._day, _, identifier = day_time_id.split('_')
+        self._identifier = identifier.rstrip('@')
+        return (self._distro, self._architecture, self._day, self._identifier)
 
     def is_pull_request(self):
         """Return True if this entry is a pull request, otherwise, False."""
