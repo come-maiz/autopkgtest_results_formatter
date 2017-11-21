@@ -61,8 +61,6 @@ class ResultsFormatter():
                 result_entries += [
                     entry for entry in results.filter_by_day(self._day)
                     if not entry.is_pull_request()]
-        for entry in result_entries:
-            print(entry.identifier)
         printer = markdown_printer.MarkdownPrinter(
             destination_path=os.path.join(
                 self._destination_path, '{}.md'.format(self._day)),
