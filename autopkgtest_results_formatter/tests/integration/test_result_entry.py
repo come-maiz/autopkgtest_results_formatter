@@ -17,6 +17,7 @@
 import testtools
 from testtools.matchers import (
     DirExists,
+    Equals,
     Not
 )
 
@@ -31,6 +32,9 @@ TEST_RESULT_DIRECTORY_PULL_REQUEST = (
     'xenial/i386/s/snapcraft/20171115_174112_f7052@')
 TEST_RESULT_DIRECTORY_PPA = (
     'xenial/amd64/s/snapcraft/20171114_134152_41f31@')
+TEST_RESULT_PACKAGE = (
+    'snapcraft 2.34-201711130017-6aa135f~ubuntu16.04.1')
+TEST_RESULT_DURATION = '14470'
 TEST_RESULT_DIRECTORY_SUCCESS = (
     'xenial/amd64/s/snapcraft/20161104_095550_99bb8@')
 TEST_RESULT_DIRECTORY_FAILURE = TEST_RESULT_DIRECTORY_PPA
@@ -71,3 +75,19 @@ class ResultEntryTestCase(testtools.TestCase):
                 index_url=TEST_RESULT_INDEX_URL,
                 directory=TEST_RESULT_DIRECTORY_FAILURE) as entry:
             self.assertFalse(entry.is_success())
+
+    def test_get_test_package(self):
+        with result_entry.ResultEntry(
+                index_url=TEST_RESULT_INDEX_URL,
+                directory=TEST_RESULT_DIRECTORY_PPA) as entry:
+            self.assertThat(
+                entry.get_test_package(),
+                Equals(TEST_RESULT_PACKAGE))
+
+    def test_get_duration(self):
+        with result_entry.ResultEntry(
+                index_url=TEST_RESULT_INDEX_URL,
+                directory=TEST_RESULT_DIRECTORY_PPA) as entry:
+            self.assertThat(
+                entry.get_duration(),
+                Equals(TEST_RESULT_DURATION))

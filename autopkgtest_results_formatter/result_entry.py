@@ -104,6 +104,13 @@ class ResultEntry():
             filename=result_file_path)
         return result_file_path
 
+    def get_test_package(self):
+        """Return the package name and version used for this test."""
+        result_dir_path = self._get_result()
+        with open(os.path.join(
+                result_dir_path, 'testpkg-version')) as testpkg_version:
+            return testpkg_version.read().strip()
+
     def is_success(self):
         """Return True if this entry is exited with 0, otherwise, False."""
         return self._get_exitcode().strip() == '0'
@@ -112,3 +119,20 @@ class ResultEntry():
         result_dir_path = self._get_result()
         with open(os.path.join(result_dir_path, 'exitcode')) as exitcode:
             return exitcode.read()
+
+    def get_duration(self):
+        """Return the duration of the test execution."""
+        result_dir_path = self._get_result()
+        with open(os.path.join(
+                result_dir_path, 'duration')) as duration:
+            return duration.read().strip()
+
+    def get_links(self):
+        """Return the execution output as a list of tuples (name, url)."""
+        return [
+            (file_name.split(os.extsep)[0],
+             '{index}/{directory}/{file_name}'.format(
+                 index=self._index_url, directory=self._directory,
+                 file_name=file_name)) for
+            file_name in ('result.tar', 'log.gz', 'artifacts.tar.gz')
+        ]
