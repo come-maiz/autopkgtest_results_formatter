@@ -16,12 +16,20 @@
 
 
 class MarkdownPrinter():
+    """Print result entries to a markdown file."""
 
     def __init__(self, *, destination_path, result_entries):
+        """Printer constructor.
+
+        :parm str destination_path: The path to the markdown file to print.
+        :param result_entries: The result entries to print.
+        :type result_etries: List of result_entry.ResultEntry objects.
+        """
         self._markdown_file_path = destination_path
         self._result_entries = result_entries
 
     def print_results(self):
+        """Print the result entries to the markdown file."""
         parsed_dictionary = self._parse()
         with open(self._markdown_file_path, 'w') as markdown_file:
             for day in parsed_dictionary:
@@ -60,11 +68,12 @@ class MarkdownPrinter():
 
     def _print_result(self, entry, markdown_file):
         markdown_file.write(
-            '{}\n'.format(entry['version']))
+            '{}\n\n'.format(entry['version']))
         if entry['result']:
             markdown_file.write(':white_check_mark: passed ')
         else:
             markdown_file.write(':x: failed ')
-        markdown_file.write('in {}s\n'.format(entry['duration']))
-        for name, url in entry['links']:
-            markdown_file.write('({})[{}]\n'.format(name, url))
+        markdown_file.write('in {}s\n\n'.format(entry['duration']))
+        markdown_file.write(' | '.join(
+            ['[{}]({})'.format(name, url) for name, url in entry['links']]))
+        markdown_file.write('\n\n')

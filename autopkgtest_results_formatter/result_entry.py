@@ -88,8 +88,10 @@ class ResultEntry():
     def _get_info_from_directory(self):
         dir_parts = self._directory.split('/')[-5:]
         self._distro, self._architecture, _, _, day_time_id = dir_parts
-        self._day, _, identifier = day_time_id.split('_')
-        self._identifier = identifier.rstrip('@')
+        self._day, time, identifier = day_time_id.split('_')
+        self._identifier = (
+            self._distro + self._architecture + self._day + time +
+            identifier.rstrip('@'))
         return (self._distro, self._architecture, self._day, self._identifier)
 
     def is_pull_request(self):

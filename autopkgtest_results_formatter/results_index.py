@@ -36,7 +36,7 @@ class ResultsIndex():
 
     def __init__(
             self, *, distro, ppa_user, ppa_name,
-            base_results_url=_BASE_RESULTS_URL):
+            base_results_url=None):
         """Index constructor.
 
         :param str distro: The name of the distro, for example: xenial.
@@ -53,6 +53,8 @@ class ResultsIndex():
         self._distro = distro
         self._ppa_user = ppa_user
         self._ppa_name = ppa_name
+        if not base_results_url:
+            base_results_url = _BASE_RESULTS_URL
         self._base_results_url = base_results_url
         self._index_file_path = None
         self._url = None
@@ -100,7 +102,7 @@ class ResultsIndex():
         The value returned by each iteration is the directory that contains the
         files with the results other information of the test execution.
 
-        :param str day: The day to filter results, with format yyyymmdd.
+        :param str day: The day to filter results, with format yyyymmdd.x
         :raises errors.ResultsIndexNotDownloadedError: If called before the
             index has been downloaded.
         """

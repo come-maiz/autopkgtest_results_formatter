@@ -68,11 +68,11 @@ class MarkDownPrinterTestCase(unit.TestCase):
                 '\n'
                 '### testarch\n'
                 '\n'
-                'package_name package_version\n'
-                ':white_check_mark: passed in 100s\n'
-                '(result)[{url}/result.tar]\n'
-                '(log)[{url}/log.gz]\n'
-                '(artifacts)[{url}/artifacts.tar.gz]\n'.format(
+                'package_name package_version\n\n'
+                ':white_check_mark: passed in 100s\n\n'
+                '[result]({url}/result.tar) | '
+                '[log]({url}/log.gz) | '
+                '[artifacts]({url}/artifacts.tar.gz)\n\n'.format(
                     url=expected_url)
             ))
 
@@ -101,10 +101,10 @@ class MarkDownPrinterTestCase(unit.TestCase):
                 '\n'
                 '### testarch\n'
                 '\n'
-                'package_name package_version\n'
-                ':x: failed in 100s\n'
-                '(result)[{url}/result.tar]\n'
-                '(log)[{url}/log.gz]\n'
-                '(artifacts)[{url}/artifacts.tar.gz]\n'.format(
+                'package_name package_version\n\n'
+                ':x: failed in 100s\n\n'
+                '[result]({url}/result.tar) | '
+                '[log]({url}/log.gz) | '
+                '[artifacts]({url}/artifacts.tar.gz)\n\n'.format(
                     url=expected_url)
             ))

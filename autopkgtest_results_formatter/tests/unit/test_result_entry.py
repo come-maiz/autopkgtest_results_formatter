@@ -72,9 +72,9 @@ class ResultEntryTestCase(unit.TestCase):
         self.assertThat(
             result_entry.ResultEntry(
                 index_url='dummy',
-                directory=('dummy/dummy/dummy/dummy/'
-                           'dummy_dummy_testid@')).identifier,
-            Equals('testid'))
+                directory=('test_distro/test_arch/dummy/dummy/'
+                           'testday_testtime_testid@')).identifier,
+            Equals('test_distrotest_archtestdaytesttimetestid'))
 
     def test_download_result_makes_request(self):
         with mock.patch('urllib.request.urlretrieve') as mock_urlretrieve:
