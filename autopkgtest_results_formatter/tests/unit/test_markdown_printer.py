@@ -17,7 +17,11 @@
 import os
 import tarfile
 
-from testtools.matchers import FileContains
+from testtools.matchers import (
+    FileContains,
+    FileExists,
+    Not
+)
 
 from autopkgtest_results_formatter import (
     markdown_printer,
@@ -42,6 +46,14 @@ class MarkDownPrinterTestCase(unit.TestCase):
                 with open(file_path, 'w') as file_:
                     file_.write(value)
                 tar_file.add(file_path, arcname=file_name)
+
+    def test_print_without_results(self):
+        destination = os.path.join(self.path, 'test.md')
+        printer = markdown_printer.MarkdownPrinter(
+            destination_path=destination,
+            result_entries=[])
+        printer.print_results()
+        self.assertThat(destination, Not(FileExists()))
 
     def test_print_one_successful_result(self):
         destination = os.path.join(self.path, 'test.md')

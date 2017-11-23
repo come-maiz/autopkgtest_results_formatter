@@ -31,6 +31,8 @@ class MarkdownPrinter():
     def print_results(self):
         """Print the result entries to the markdown file."""
         parsed_dictionary = self._parse()
+        if not parsed_dictionary:
+            return
         with open(self._markdown_file_path, 'w') as markdown_file:
             for day in parsed_dictionary:
                 markdown_file.write('# {}\n\n'.format(day))
